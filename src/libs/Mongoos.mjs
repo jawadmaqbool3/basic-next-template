@@ -6,7 +6,7 @@ const connectionString = process.env.MONGOOSE_STRING;
 
 const option = {};
 
-async function initMongoos() {
+export default async function connect() {
   if (connectionString) {
     let mongooseConn = await mongoose.connect(connectionString, option);
     if (mongooseConn.connection) {
@@ -19,6 +19,4 @@ async function initMongoos() {
   }
 }
 
-module.exports = {
-  initMongoos,
-};
+

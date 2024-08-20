@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import './assets/plugins/custom/datatables/datatables.bundle.css';
-import './assets/plugins/custom/vis-timeline/vis-timeline.bundle.css';
-import './assets/plugins/global/plugins.bundle.css';
-import './assets/css/style.bundle.css';
+import "./assets/plugins/custom/datatables/datatables.bundle.css";
+import "./assets/plugins/custom/vis-timeline/vis-timeline.bundle.css";
+import "./assets/plugins/global/plugins.bundle.css";
+import "./assets/css/style.bundle.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,6 +17,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+
+
   return (
     <html lang="en">
       <body className={inter.className}>{children}</body>

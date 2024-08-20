@@ -1,42 +1,78 @@
-import { hashPassword } from "@/config/Utilities";
-import LoginRequest from "@/interfaces/LoginRequest";
+import {
+  hashPassword,
+  comparePassword,
+  generateToken,
+} from "@/config/Utilities";
 
-import RegistrationRequest from "@/interfaces/RegistrationRequest";
-import User  from "@/models/User";
+import {
+  respondSuccess,
+  respondCustomException,
+  respondServerError,
+} from "@/config/Response";
 
-import { NextResponse } from "next/server";
+import CustomException from "@/exceptions/CustomException";
+import LoginException from "@/exceptions/Auth/LoginException";
+import LoginRequest from "@/interfaces/Requests/Login";
+import RegistrationRequest from "@/interfaces/Requests/Registration";
+
+import { create, searchByEmail } from "@/models/User";
+
+import type User from "@/interfaces/Models/User";
+import InvalidInputException from "@/exceptions/Form/InvalidInputException";
 
 export async function login(request: Request) {
-  const body: LoginRequest = await request.json();
+  try {
+    const credentials: LoginRequest = await request.json();
 
-  const { email, password } = body;
+    const user = await validateLoginAttempt(credentials);
 
-  console.log(email, password);
+    const token = generateToken({ userId: user._id });
 
-  return NextResponse.json({ message: "User created" });
+    return respondSuccess({
+      message: "User logged in successfully",
+      token: token,
+      user: user,
+    });
+  } catch (error) {
+    if (error instanceof CustomException) {
+      return respondCustomException(error);
+    } else {
+      return respondServerError(error);
+    }
+  }
 }
 
 export async function register(request: Request) {
-
   let requestBody: RegistrationRequest = await request.json();
-  
+
   requestBody = await validateRegistrationRequest(requestBody);
 
-  User.create(requestBody);
+  console.log(requestBody);
 }
 
 async function validateRegistrationRequest(
   request: RegistrationRequest
 ): Promise<RegistrationRequest> {
+    
   if (request.first_name.length <= 3) {
-    throw new Error("first name should be more than 2 characters");
+    throw new InvalidInputException("first name should be more than 2 characters");
   }
 
   if (request.last_name && request.last_name.length <= 3) {
-    throw new Error("Last name should be more than 2 characters");
+    throw new InvalidInputException("Last name should be more than 2 characters");
   }
 
   request.password = await hashPassword(request.password);
 
   return request;
+}
+
+async function validateLoginAttempt(request: LoginRequest): Promise<User> {
+  const user = await searchByEmail(request.email);
+
+  if (!user || (await comparePassword(request.password, user.password))) {
+    throw new LoginException();
+  }
+
+  return user;
 }
