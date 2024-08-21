@@ -1,9 +1,26 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import UserBreadcrum from "@/app/components/users/UserBreadcrum";
+import Modal, { ModalHandle, ModalProps } from "@/app/components/layout/Modal";
+import UserForm from "@/app/components/users/UserForm";
+
 export default function Users() {
+  const modalRef = useRef<ModalHandle>(null);
+  const [modalSettings, setModalSettings] = useState<ModalProps>({
+    id: "users_modal",
+    title: "Create User",
+    size: "modal-lg",
+    body: "",
+    footer: "",
+  });
+  const openModal = () => {
+    if (modalRef.current) {
+      modalRef.current.openModal();
+    }
+  };
+
   return (
     <div className="card mb-5 mb-xl-8">
       <div className="card-header border-0 py-5">
@@ -32,6 +49,7 @@ export default function Users() {
         </div>
         <div className="card-toolbar">
           <button
+            onClick={openModal}
             type="button"
             className="btn btn-sm btn-icon btn-color-dark btn-active-light-dark"
             data-kt-menu-trigger="click"
@@ -79,6 +97,28 @@ export default function Users() {
           </table>
         </div>
       </div>
+
+      <Modal
+        id={modalSettings.id}
+        ref={modalRef}
+        size={modalSettings.size}
+        title={modalSettings.title}
+        body={<UserForm />}
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="button" className="btn btn-primary">
+              Save changes
+            </button>
+          </>
+        }
+      />
     </div>
   );
 }
