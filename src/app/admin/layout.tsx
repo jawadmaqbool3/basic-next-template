@@ -47,7 +47,7 @@ export default function RootLayout({
               >
                 <div
                   id="kt_app_content_container"
-                  className="app-container p-0 pt-4"
+                  className="app-container container-xxl p-0 pt-4"
                 >
                   {children}
                 </div>
