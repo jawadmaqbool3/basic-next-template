@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
-export default function Login() {
+import UserBreadcrum from "@/app/components/users/UserBreadcrum";
+export default function Users() {
   return (
     <div className="card mb-5 mb-xl-8">
       <div className="card-header border-0 py-5">
@@ -13,10 +13,7 @@ export default function Login() {
 
         <div className="row">
           <div className="col-md-12">
-            {/* <x-breadcrums :links="[
-                        'Home' => route('dashboard'),
-                        'Users' => false,
-                    ]" /> */}
+            <UserBreadcrum />
           </div>
           <div className="col-md-4">
             <div className="d-flex align-items-center position-relative my-1 mb-2 mb-md-0">
@@ -34,16 +31,13 @@ export default function Login() {
           </div>
         </div>
         <div className="card-toolbar">
-
           <button
             type="button"
-            className="btn btn-sm btn-icon btn-color-primary btn-active-light-primary"
+            className="btn btn-sm btn-icon btn-color-dark btn-active-light-dark"
             data-kt-menu-trigger="click"
             data-kt-menu-placement="bottom-end"
           >
-            <span className="svg-icon svg-icon-2 ">
-              +
-            </span>
+            <span className="h2 svg-icon svg-icon-2 ">+</span>
           </button>
           <button
             type="button"
