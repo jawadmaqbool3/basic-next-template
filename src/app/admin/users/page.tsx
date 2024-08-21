@@ -1,19 +1,11 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import UserModal from "@/app/components/users/UserModal";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
-export default function Users() {
-  const userModalRef = useRef<(() => void) | null>(null);
-  const initiateNewUserModal = () => {
-    if (userModalRef.current) {
-      userModalRef.current();
-    }
-  };
-
+export default function Login() {
   return (
     <div className="card mb-5 mb-xl-8">
-      <UserModal openModal={(func: any) => (userModalRef.current = func)} />
       <div className="card-header border-0 py-5">
         <h3 className="card-title align-items-start flex-column w-100">
           <span className="card-label fw-bold fs-3 mb-1">Users</span>
@@ -42,14 +34,16 @@ export default function Users() {
           </div>
         </div>
         <div className="card-toolbar">
+
           <button
-            onClick={initiateNewUserModal}
             type="button"
-            className="btn btn-sm btn-icon btn-color-dark btn-active-light-primary"
+            className="btn btn-sm btn-icon btn-color-primary btn-active-light-primary"
             data-kt-menu-trigger="click"
             data-kt-menu-placement="bottom-end"
           >
-            <span className="svg-icon svg-icon-2 h2">+</span>
+            <span className="svg-icon svg-icon-2 ">
+              +
+            </span>
           </button>
           <button
             type="button"
@@ -74,7 +68,6 @@ export default function Users() {
           </div>
         </div>
       </div>
-
       <div className="card-body pt-3">
         <div className="table-responsive">
           <table

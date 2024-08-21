@@ -1,12 +1,12 @@
-// import type { Metadata } from "next";
-"use client";
+import type { Metadata } from "next";
+
 import Header from "@/app/components/layout/Header";
 import Sidebar from "@/app/components/layout/Sidebar";
 
-// export const metadata: Metadata = {
-//   title: "Login",
-//   description: "Provide Credentials to Login",
-// };
+export const metadata: Metadata = {
+  title: "Login",
+  description: "Provide Credentials to Login",
+};
 
 export default function RootLayout({
   children,
