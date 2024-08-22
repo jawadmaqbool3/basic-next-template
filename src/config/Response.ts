@@ -13,13 +13,25 @@ export const respondCustomException = (error: CustomException) => {
   );
 };
 
-export const respondServerError = (error: unknown) => {
+export const respondServerError = (
+  error: unknown,
+) => {
+
   return respond(
     {
-      message: "Unexpected error occured.",
+      message:  "Unexpected error occured.",
       console: error,
     },
     500
+  );
+};
+
+export const respondCustomError = (message: unknown, status = 500) => {
+  return respond(
+    {
+      message: message,
+    },
+    status
   );
 };
 

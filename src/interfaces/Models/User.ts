@@ -9,4 +9,8 @@ interface User extends Document {
   createdAt?: Date;
 }
 
+export interface UserRead extends User {
+  name: string;
+}
+
 export default User;

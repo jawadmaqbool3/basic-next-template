@@ -9,16 +9,27 @@ export interface ModalProps {
 }
 export interface ModalHandle {
   openModal: () => void;
+  closeModal: () => void;
 }
 
 const Modal = forwardRef<ModalHandle, ModalProps>(
   ({ id, title, body, size, footer }, ref) => {
     const modalRef = useRef<HTMLDivElement>(null);
+    let modal: any = false;
+    if (modalRef.current) {
+      modal = new bootstrap.Modal(modalRef.current);
+    }
+
     useImperativeHandle(ref, () => ({
       openModal() {
-        if (modalRef.current) {
-          const modal = new bootstrap.Modal(modalRef.current);
+        if (modal) {
           modal.show();
+        }
+      },
+
+      closeModal() {
+        if (modal) {
+          modal.hide();
         }
       },
     }));

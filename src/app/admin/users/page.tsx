@@ -1,13 +1,26 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import axios from "axios";
+
 import UserBreadcrum from "@/app/components/users/UserBreadcrum";
-import Modal, { ModalHandle, ModalProps } from "@/app/components/layout/Modal";
+
 import UserForm from "@/app/components/users/UserForm";
+
+import UserTable from "@/app/components/users/UserTable";
+
+import UserFormHandler from "@/app/component_interfaces/Users/UserFormHandler";
+
+import UserTableHandler from "@/app/component_interfaces/Users/UserTableHandler";
+
+import Modal, { ModalHandle, ModalProps } from "@/app/components/layout/Modal";
 
 export default function Users() {
   const modalRef = useRef<ModalHandle>(null);
+
+  const formRef = useRef<UserFormHandler>(null);
+
+  const tableRef = useRef<UserTableHandler>(null);
+
   const [modalSettings, setModalSettings] = useState<ModalProps>({
     id: "users_modal",
     title: "Create User",
@@ -15,9 +28,31 @@ export default function Users() {
     body: "",
     footer: "",
   });
+
   const openModal = () => {
     if (modalRef.current) {
       modalRef.current.openModal();
+    }
+  };
+
+  const closeModal = () => {
+    if (modalRef.current) {
+      modalRef.current.closeModal();
+    }
+  };
+
+  const refreshTable = () => {
+    if (tableRef.current) {
+      tableRef.current.refresh();
+    }
+  };
+
+  const submit = () => {
+    if (formRef.current) {
+      formRef.current.submit(() => {
+        closeModal();
+        refreshTable();
+      });
     }
   };
 
@@ -82,19 +117,7 @@ export default function Users() {
       </div>
       <div className="card-body pt-3">
         <div className="table-responsive">
-          <table
-            className="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4"
-            id="category_table"
-          >
-            <thead>
-              <tr className="border-0">
-                <th className="fw-bold p-0">SR#</th>
-                <th className="fw-bold p-0">Avatar</th>
-                <th className="fw-bold p-0 min-w-150px text-start">Name</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+          <UserTable ref={tableRef} />
         </div>
       </div>
 
@@ -103,7 +126,7 @@ export default function Users() {
         ref={modalRef}
         size={modalSettings.size}
         title={modalSettings.title}
-        body={<UserForm />}
+        body={<UserForm ref={formRef} />}
         footer={
           <>
             <button
@@ -113,7 +136,7 @@ export default function Users() {
             >
               Close
             </button>
-            <button type="button" className="btn btn-primary">
+            <button type="submit" onClick={submit} className="btn btn-primary">
               Save changes
             </button>
           </>

@@ -43,23 +43,34 @@ export async function login(request: Request) {
 }
 
 export async function register(request: Request) {
-  let requestBody: RegistrationRequest = await request.json();
+  try {
+    let requestBody: RegistrationRequest = await request.json();
 
-  requestBody = await validateRegistrationRequest(requestBody);
+    requestBody = await validateRegistrationRequest(requestBody);
 
-  console.log(requestBody);
+    console.log(requestBody);
+  } catch (error) {
+    if (error instanceof CustomException) {
+      return respondCustomException(error);
+    } else {
+      return respondServerError(error);
+    }
+  }
 }
 
 async function validateRegistrationRequest(
   request: RegistrationRequest
 ): Promise<RegistrationRequest> {
-    
-  if (request.first_name.length <= 3) {
-    throw new InvalidInputException("first name should be more than 2 characters");
+  if (request.first_name.length < 3) {
+    throw new InvalidInputException(
+      "first name should be more than 2 characters"
+    );
   }
 
-  if (request.last_name && request.last_name.length <= 3) {
-    throw new InvalidInputException("Last name should be more than 2 characters");
+  if (request.last_name && request.last_name.length < 3) {
+    throw new InvalidInputException(
+      "Last name should be more than 2 characters"
+    );
   }
 
   request.password = await hashPassword(request.password);
