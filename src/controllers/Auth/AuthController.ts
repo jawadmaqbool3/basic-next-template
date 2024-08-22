@@ -12,8 +12,8 @@ import {
 
 import CustomException from "@/exceptions/CustomException";
 import LoginException from "@/exceptions/Auth/LoginException";
-import LoginRequest from "@/interfaces/Requests/Login";
-import RegistrationRequest from "@/interfaces/Requests/Registration";
+import LoginRequest from "@/types/Requests/Login";
+import RegistrationRequest from "@/types/Requests/Registration";
 
 import { create, searchByEmail } from "@/models/User";
 

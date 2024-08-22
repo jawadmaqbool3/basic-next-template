@@ -10,24 +10,65 @@ import UserTable from "@/app/components/users/UserTable";
 
 import UserFormHandler from "@/app/component_interfaces/Users/UserFormHandler";
 
-import UserTableHandler from "@/app/component_interfaces/Users/UserTableHandler";
+import { UserTableRefreshHandler } from "@/app/component_interfaces/Users/UserTableHandler";
 
 import Modal, { ModalHandle, ModalProps } from "@/app/components/layout/Modal";
+
+import UserTableProps from "@/app/component_interfaces/Users/UserTableProps";
+
+import UserFormProps from "@/app/component_interfaces/Users/UserFormProps";
 
 export default function Users() {
   const modalRef = useRef<ModalHandle>(null);
 
   const formRef = useRef<UserFormHandler>(null);
 
-  const tableRef = useRef<UserTableHandler>(null);
+  const tableRef = useRef<UserTableRefreshHandler>(null);
+  
+  const submit = () => {
+    if (formRef.current) {
+      formRef.current.submit(() => {
+        closeModal();
+        refreshTable();
+      });
+    }
+  };
 
-  const [modalSettings, setModalSettings] = useState<ModalProps>({
+  const footer = (
+    <>
+      <button
+        type="button"
+        className="btn btn-secondary"
+        data-bs-dismiss="modal"
+      >
+        Close
+      </button>
+      <button type="submit" onClick={submit} className="btn btn-primary">
+        Save changes
+      </button>
+    </>
+  );
+
+  const addUserProps: ModalProps = {
     id: "users_modal",
     title: "Create User",
     size: "modal-lg",
-    body: "",
-    footer: "",
-  });
+    body: (
+      <UserForm
+        _id=""
+        first_name=""
+        last_name=""
+        email=""
+        password=""
+        confirm_password=""
+        formMode={1}
+        ref={formRef}
+      />
+    ),
+    footer: footer,
+  };
+
+  const [modalSettings, setModalSettings] = useState(addUserProps);
 
   const openModal = () => {
     if (modalRef.current) {
@@ -47,13 +88,43 @@ export default function Users() {
     }
   };
 
-  const submit = () => {
-    if (formRef.current) {
-      formRef.current.submit(() => {
-        closeModal();
-        refreshTable();
-      });
-    }
+  const initiateEdit = (user: UserTableProps) => {
+    const formProps = (function (user: UserTableProps): UserFormProps {
+      const props: UserFormProps = user;
+      props.password = "";
+      props.confirm_password = "";
+      return props;
+    })(user);
+
+    setupEditModal(formProps);
+
+    openModal();
+  };
+
+  const setupEditModal = (formProps: UserFormProps) => {
+    setModalSettings({
+      id: "users_modal",
+      title: "Edit User",
+      size: "modal-lg",
+      body: (
+        <UserForm
+          _id={formProps._id}
+          first_name={formProps.first_name}
+          last_name={formProps.last_name}
+          email={formProps.email}
+          password={formProps.password}
+          confirm_password={formProps.confirm_password}
+          formMode={2}
+          ref={formRef}
+        />
+      ),
+      footer,
+    });
+  };
+
+  const setupAddModal = () => {
+    setModalSettings(addUserProps);
+    openModal();
   };
 
   return (
@@ -84,7 +155,7 @@ export default function Users() {
         </div>
         <div className="card-toolbar">
           <button
-            onClick={openModal}
+            onClick={setupAddModal}
             type="button"
             className="btn btn-sm btn-icon btn-color-dark btn-active-light-dark"
             data-kt-menu-trigger="click"
@@ -117,7 +188,7 @@ export default function Users() {
       </div>
       <div className="card-body pt-3">
         <div className="table-responsive">
-          <UserTable ref={tableRef} />
+          <UserTable editFunction={initiateEdit} ref={tableRef} />
         </div>
       </div>
 
@@ -126,21 +197,8 @@ export default function Users() {
         ref={modalRef}
         size={modalSettings.size}
         title={modalSettings.title}
-        body={<UserForm ref={formRef} />}
-        footer={
-          <>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-            <button type="submit" onClick={submit} className="btn btn-primary">
-              Save changes
-            </button>
-          </>
-        }
+        body={modalSettings.body}
+        footer={modalSettings.footer}
       />
     </div>
   );

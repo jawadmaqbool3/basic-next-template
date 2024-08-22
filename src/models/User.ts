@@ -1,15 +1,17 @@
 // models/User.ts
 import mongoose from "mongoose";
 import User, { UserRead } from "@/interfaces/Models/User";
-import RegistrationRequest from "@/interfaces/Requests/Registration";
+import type { CreateUserRequest } from "@/types/Request";
 import UserSchema from "@/schemas/User";
+import { filterUserKeys } from "@/config/FilterInterfaces";
 
 const model: string = "users";
 
 const Model = mongoose.models[model] || mongoose.model(model, UserSchema);
 
-export async function create(request: RegistrationRequest): Promise<User> {
-  return await Model.create<User>(request);
+export async function create(request: CreateUserRequest): Promise<User> {
+  console.log("request", filterUserKeys(request));
+  // return await Model.create(request);
 }
 
 export async function list(): Promise<UserRead[]> {
@@ -18,6 +20,8 @@ export async function list(): Promise<UserRead[]> {
       $project: {
         name: { $concat: ["$first_name", " ", "$last_name"] },
         _id: 1,
+        first_name: 1,
+        last_name: 1,
         email: 1,
         createdAt: 1,
       },

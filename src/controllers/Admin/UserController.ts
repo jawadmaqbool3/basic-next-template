@@ -9,7 +9,7 @@ import {
 
 import CustomException from "@/exceptions/CustomException";
 
-import CreateUserRequest from "@/interfaces/Requests/CreateUser";
+import type { CreateUserRequest } from "@/types/Request";
 
 import { create as createUser, list } from "@/models/User";
 

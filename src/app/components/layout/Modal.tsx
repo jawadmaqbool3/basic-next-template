@@ -16,18 +16,25 @@ const Modal = forwardRef<ModalHandle, ModalProps>(
   ({ id, title, body, size, footer }, ref) => {
     const modalRef = useRef<HTMLDivElement>(null);
     let modal: any = false;
-    if (modalRef.current) {
-      modal = new bootstrap.Modal(modalRef.current);
-    }
+
+    const initializeModal = () => {
+      if (modalRef.current) {
+        modal = new bootstrap.Modal(modalRef.current);
+      }
+    };
+
+    initializeModal();
 
     useImperativeHandle(ref, () => ({
       openModal() {
+        initializeModal();
         if (modal) {
           modal.show();
         }
       },
 
       closeModal() {
+        initializeModal();
         if (modal) {
           modal.hide();
         }
