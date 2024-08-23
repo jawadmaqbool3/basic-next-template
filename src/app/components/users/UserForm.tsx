@@ -56,7 +56,6 @@ const UserForm = forwardRef<UserFormHandler, UserFormProps>((props, ref) => {
   return (
     <>
       <form action="" onSubmit={handleSubmit}>
-        <input type="hidden" name="_id" value={formData._id} />
         <div className="card card-flush py-4">
           <div className="card-body pt-0">
             <div className="fv-row">

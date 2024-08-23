@@ -1,17 +1,22 @@
 // models/User.ts
 import mongoose from "mongoose";
 import User, { UserRead } from "@/interfaces/Models/User";
-import type { CreateUserRequest } from "@/types/Request";
+import type { TCreateUserRequest } from "@/types/Requests/CreateUser";
+import { filterRequestKeys } from "@/types/Requests/CreateUser";
 import UserSchema from "@/schemas/User";
-import { filterUserKeys } from "@/config/FilterInterfaces";
+import { hashPassword } from "@/config/Utilities";
 
 const model: string = "users";
 
 const Model = mongoose.models[model] || mongoose.model(model, UserSchema);
 
-export async function create(request: CreateUserRequest): Promise<User> {
-  console.log("request", filterUserKeys(request));
-  // return await Model.create(request);
+export async function create(request: TCreateUserRequest): Promise<User> {
+  
+  const filterRequest = filterRequestKeys(request);
+  
+  filterRequest.password = await hashPassword(filterRequest.password);
+  
+  return  Model.create(filterRequest);
 }
 
 export async function list(): Promise<UserRead[]> {
