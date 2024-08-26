@@ -10,32 +10,46 @@ const model: string = "users";
 
 const Model = mongoose.models[model] || mongoose.model(model, UserSchema);
 
+const projectionView = {
+  name: { $concat: ["$first_name", " ", "$last_name"] },
+  _id: 1,
+  first_name: 1,
+  last_name: 1,
+  email: 1,
+  createdAt: 1,
+};
+
 export async function create(request: TCreateUserRequest): Promise<User> {
-  
   const filterRequest = filterRequestKeys(request);
-  
+
   filterRequest.password = await hashPassword(filterRequest.password);
-  
-  return  Model.create(filterRequest);
+
+  return Model.create(filterRequest);
 }
 
 export async function list(): Promise<UserRead[]> {
   return await Model.aggregate<UserRead>([
     {
-      $project: {
-        name: { $concat: ["$first_name", " ", "$last_name"] },
-        _id: 1,
-        first_name: 1,
-        last_name: 1,
-        email: 1,
-        createdAt: 1,
-      },
+      $project: projectionView,
     },
   ]);
 }
 
-export async function searchById(id: string): Promise<User | null> {
-  return await Model.findById<User>(id);
+export async function searchById(id: string): Promise<UserRead | null> {
+  const user = (
+    await Model.aggregate<UserRead>([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(id),
+        },
+      },
+      {
+        $project: projectionView,
+      },
+    ])
+  )[0];
+
+  return user ? user : null;
 }
 
 export async function searchByEmail(email: string): Promise<User | null> {

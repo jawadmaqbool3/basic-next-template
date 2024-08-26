@@ -1,5 +1,4 @@
 import {
-  hashPassword,
   comparePassword,
   generateToken,
 } from "@/config/Utilities";
@@ -16,7 +15,7 @@ import LoginException from "@/exceptions/Auth/LoginException";
 
 import { TLoginRequest } from "@/types/Requests/Login";
 
-import { create, searchByEmail } from "@/models/User";
+import {  searchByEmail } from "@/models/User";
 
 
 export async function login(request: Request) {
