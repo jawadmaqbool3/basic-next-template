@@ -43,14 +43,24 @@ const UserForm = forwardRef<UserFormHandler, UserFormProps>((props, ref) => {
   };
 
   const submitUser = (callback: () => void) => {
-    axios
-      .post("/api/users", formData)
-      .then((res) => {
-        callback();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (formData.formMode === 1)
+      axios
+        .post("/api/users", formData)
+        .then((res) => {
+          callback();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    else if (formData.formMode === 2)
+      axios
+        .put(`/api/users/${formData._id}`, formData)
+        .then((res) => {
+          callback();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
   };
 
   return (

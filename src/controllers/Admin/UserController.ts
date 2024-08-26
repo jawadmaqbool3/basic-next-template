@@ -4,7 +4,7 @@ import {
   respondCustomError,
 } from "@/config/Response";
 
-import type { TCreateUserRequest } from "@/types/Requests/CreateUser";
+import type { TUserRquest } from "@/types/Requests/UserRequest";
 
 import { create as createUser, list, searchById } from "@/models/User";
 
@@ -16,7 +16,7 @@ import { UserAlreadyExists, UserNotFound } from "@/exceptions/Admin/Users";
 
 export async function create(request: Request) {
   try {
-    let requestBody: TCreateUserRequest = await request.json();
+    let requestBody: TUserRquest = await request.json();
 
     let user: User = await createUser(requestBody);
 
@@ -59,5 +59,26 @@ export async function show(request: NextRequest) {
     });
   } catch (error) {
     return respondServerError(error);
+  }
+}
+
+export async function update(request: NextRequest) {
+  try {
+    let requestBody: TUserRquest = await request.json();
+
+    console.log("requestBody", requestBody);
+
+    // let user: User = await createUser(requestBody);
+
+    return respondSuccess({
+      message: "User created successfully",
+      // user: user,
+    });
+  } catch (error) {
+    if (error instanceof Error && error.name == "MongoServerError") {
+      return respondCustomError(new UserAlreadyExists(), 409);
+    } else {
+      return respondServerError(error);
+    }
   }
 }

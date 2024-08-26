@@ -1,4 +1,4 @@
-import type { TCreateUserRequest } from "@/types/Requests/CreateUser";
+import type { TCreateUserRequest } from "@/types/Requests/UserRequest";
 export default function filterTypesKey(before: TCreateUserRequest) {
     
   //loop through before

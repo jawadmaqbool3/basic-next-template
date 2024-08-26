@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const CreateUserRequest = {
+const UserRequest = {
   email: z
     .string()
     .email()
@@ -41,20 +41,20 @@ const CreateUserRequest = {
     }),
 };
 
-const CreateCredentialsValidator = z.object(CreateUserRequest);
+const CreateCredentialsValidator = z.object(UserRequest);
 
-const CreateUserRequestKeys = Object.keys(CreateUserRequest);
+const CreateUserRequestKeys = Object.keys(UserRequest);
 
 export function filterRequestKeys(
-  before: TCreateUserRequest
-): TCreateUserRequest {
-  const after: TCreateUserRequest = Object.fromEntries(
+  before: TUserRquest
+): TUserRquest {
+  const after: TUserRquest = Object.fromEntries(
     Object.entries(before).filter(([key]) =>
-      CreateUserRequestKeys.includes(key as keyof TCreateUserRequest)
+      CreateUserRequestKeys.includes(key as keyof TUserRquest)
     )
-  ) as TCreateUserRequest;
+  ) as TUserRquest;
 
   return after;
 }
 
-export type TCreateUserRequest = z.infer<typeof CreateCredentialsValidator>;
+export type TUserRquest = z.infer<typeof CreateCredentialsValidator>;
