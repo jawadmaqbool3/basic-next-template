@@ -1,3 +1,4 @@
+import { model } from "mongoose";
 import React, { forwardRef, useImperativeHandle, useRef } from "react";
 
 export interface ModalProps {
@@ -17,25 +18,20 @@ const Modal = forwardRef<ModalHandle, ModalProps>(
     const modalRef = useRef<HTMLDivElement>(null);
     let modal: any = false;
 
-    const initializeModal = () => {
-      if (modalRef.current) {
-        modal = new bootstrap.Modal(modalRef.current);
-      }
-    };
+   
 
-    initializeModal();
 
     useImperativeHandle(ref, () => ({
       openModal() {
-        initializeModal();
-        if (modal) {
+        if (modalRef.current) {
+          modal = new bootstrap.Modal(modalRef.current);
           modal.show();
         }
       },
 
       closeModal() {
-        initializeModal();
-        if (modal) {
+        if (modalRef.current) {
+          modal = new bootstrap.Modal(modalRef.current);
           modal.hide();
         }
       },
