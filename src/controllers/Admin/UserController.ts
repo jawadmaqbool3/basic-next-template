@@ -93,6 +93,7 @@ export async function update(request: NextRequest) {
       user: user,
     });
   } catch (error) {
+    console.log("Error", error);
     if (error instanceof Error && error.name == "MongoServerError") {
       return respondCustomError(new UserAlreadyExists(), 409);
     } else if (error instanceof ZodError) {

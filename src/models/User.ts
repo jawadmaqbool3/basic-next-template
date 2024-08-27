@@ -71,10 +71,17 @@ export async function searchByEmail(email: string): Promise<UserRead | null> {
 
 export async function update(
   id: string,
-  user: Partial<TUserRequest>
+  request: Partial<TUserRequest>
 ): Promise<UserRead | null> {
-   await Model.findByIdAndUpdate(id, user);
-   return await searchById(id);
+  const filterRequest = filterRequestKeys(request);
+
+  if (filterRequest.password) {
+    filterRequest.password = await hashPassword(filterRequest.password);
+  }
+  
+  await Model.findByIdAndUpdate(id, filterRequest);
+
+  return await searchById(id);
 }
 
 export async function remove(id: string): Promise<boolean | null> {

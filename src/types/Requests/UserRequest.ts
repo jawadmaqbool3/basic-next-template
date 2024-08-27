@@ -97,8 +97,9 @@ const CreateUserRequestKeys = Object.keys(UserRequest);
 
 export function filterRequestKeys(before: TUserRequest): TUserRequest {
   const after: TUserRequest = Object.fromEntries(
-    Object.entries(before).filter(([key]) =>
-      CreateUserRequestKeys.includes(key as keyof TUserRequest)
+    Object.entries(before).filter(
+      ([key]) =>
+        before[key] && CreateUserRequestKeys.includes(key as keyof TUserRequest)
     )
   ) as TUserRequest;
 
