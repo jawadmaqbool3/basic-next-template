@@ -2,21 +2,33 @@ import {
   respondSuccess,
   respondServerError,
   respondCustomError,
+  respondZodError,
 } from "@/config/Response";
 
-import type { TUserRquest } from "@/types/Requests/UserRequest";
+import type { TUserRequest } from "@/types/Requests/UserRequest";
 
-import { create as createUser, list, searchById } from "@/models/User";
+import { CreateCredentialsValidator, UpdateCredentialsValidator } from "@/types/Requests/UserRequest";
 
-import User from "@/interfaces/Models/User";
+import {
+  create as createUser,
+  list,
+  searchById,
+  update as updateUser,
+} from "@/models/User";
+
+import User, { UserRead } from "@/interfaces/Models/User";
 
 import { NextRequest } from "next/server";
 
 import { UserAlreadyExists, UserNotFound } from "@/exceptions/Admin/Users";
 
+import { ZodError } from "zod";
+
 export async function create(request: Request) {
   try {
-    let requestBody: TUserRquest = await request.json();
+    let requestBody: TUserRequest = await request.json();
+
+    await CreateCredentialsValidator.parseAsync(requestBody);
 
     let user: User = await createUser(requestBody);
 
@@ -26,7 +38,9 @@ export async function create(request: Request) {
     });
   } catch (error) {
     if (error instanceof Error && error.name == "MongoServerError") {
-      return respondCustomError(new UserAlreadyExists(), 409);
+      return respondCustomError(new UserAlreadyExists().getMessage(), 409);
+    } else if (error instanceof ZodError) {
+      return respondZodError(error);
     } else {
       return respondServerError(error);
     }
@@ -64,19 +78,25 @@ export async function show(request: NextRequest) {
 
 export async function update(request: NextRequest) {
   try {
-    let requestBody: TUserRquest = await request.json();
+    const id: string | undefined = request.nextUrl.pathname.split("/").pop();
 
-    console.log("requestBody", requestBody);
+    if (!id) throw new UserNotFound();
 
-    // let user: User = await createUser(requestBody);
+    let requestBody: TUserRequest = await request.json();
+
+    await UpdateCredentialsValidator.parseAsync(requestBody);
+
+    let user: UserRead | null = await updateUser(id, requestBody);
 
     return respondSuccess({
-      message: "User created successfully",
-      // user: user,
+      message: "User updated successfully",
+      user: user,
     });
   } catch (error) {
     if (error instanceof Error && error.name == "MongoServerError") {
       return respondCustomError(new UserAlreadyExists(), 409);
+    } else if (error instanceof ZodError) {
+      return respondZodError(error);
     } else {
       return respondServerError(error);
     }

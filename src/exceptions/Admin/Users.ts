@@ -8,6 +8,6 @@ export  class UserNotFound extends CustomException {
 
 export  class UserAlreadyExists extends CustomException {
   constructor() {
-    super("User already exists", 401);
+    super("User already exists", 409);
   }
 }

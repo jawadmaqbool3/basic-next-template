@@ -1,7 +1,7 @@
 // models/User.ts
 import mongoose from "mongoose";
 import User, { UserRead } from "@/interfaces/Models/User";
-import type { TUserRquest } from "@/types/Requests/UserRequest";
+import type { TUserRequest } from "@/types/Requests/UserRequest";
 import { filterRequestKeys } from "@/types/Requests/UserRequest";
 import UserSchema from "@/schemas/User";
 import { hashPassword } from "@/config/Utilities";
@@ -19,7 +19,7 @@ const projectionView = {
   createdAt: 1,
 };
 
-export async function create(request: TUserRquest): Promise<UserRead> {
+export async function create(request: TUserRequest): Promise<UserRead> {
   const filterRequest = filterRequestKeys(request);
 
   filterRequest.password = await hashPassword(filterRequest.password);
@@ -71,9 +71,10 @@ export async function searchByEmail(email: string): Promise<UserRead | null> {
 
 export async function update(
   id: string,
-  user: Partial<User>
-): Promise<boolean | null> {
-  return await Model.findByIdAndUpdate(id, user);
+  user: Partial<TUserRequest>
+): Promise<UserRead | null> {
+   await Model.findByIdAndUpdate(id, user);
+   return await searchById(id);
 }
 
 export async function remove(id: string): Promise<boolean | null> {
